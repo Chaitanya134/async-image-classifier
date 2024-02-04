@@ -12,15 +12,32 @@ export default function MainLayout({
   completed,
 }: MainLayoutProps) {
   return (
-    <Tabs defaultValue="home" className="w-[400px]">
-      <TabsList>
-        <TabsTrigger value="home">Home</TabsTrigger>
-        <TabsTrigger value="pending">Pending</TabsTrigger>
-        <TabsTrigger value="completed">Completed</TabsTrigger>
-      </TabsList>
-      <TabsContent value="home">{home}</TabsContent>
-      <TabsContent value="pending">{pending}</TabsContent>
-      <TabsContent value="completed">{completed}</TabsContent>
-    </Tabs>
+    <main className="h-screen p-4">
+      <Tabs defaultValue="home" className="h-full">
+        <TabsList className="w-full">
+          <TabsTrigger className="grow" value="home">
+            Home
+          </TabsTrigger>
+          <TabsTrigger className="grow" value="pending">
+            Pending
+          </TabsTrigger>
+          <TabsTrigger className="grow" value="completed">
+            Completed
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="home" className="h-[calc(100%-2.25rem-0.5rem)]">
+          {home}
+        </TabsContent>
+        <TabsContent value="pending" className="h-[calc(100%-2.25rem-0.5rem)]">
+          {pending}
+        </TabsContent>
+        <TabsContent
+          value="completed"
+          className="h-[calc(100%-2.25rem-0.5rem)]"
+        >
+          {completed}
+        </TabsContent>
+      </Tabs>
+    </main>
   );
 }
