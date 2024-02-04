@@ -13,14 +13,16 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { useState } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function HomePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { toast } = useToast();
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsLoading(true);
     const files = event.target.files;
     if (!files || files.length === 0) return;
     setSelectedFile(files[0]);
@@ -30,22 +32,39 @@ export default function HomePage() {
       setPreviewImage(reader.result as string);
     };
     reader.readAsDataURL(files[0]);
-    setIsLoading(false);
   };
 
   const classifyDisabled = !selectedFile || isLoading;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
     try {
+      setIsLoading(true);
+      const form = e.currentTarget;
+      const formData = new FormData(form);
       const res = await fetch("/api/job", { method: "POST", body: formData });
       const data = await res.json();
-      console.log(res);
+      resetForm(form);
+      toast({
+        title: "Image classification proccess started",
+        description: "Your image is currently in pending state",
+      });
     } catch (err) {
       console.log(err);
+      toast({
+        title: "Error occured",
+        description: "Error uploading file",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
+  }
+
+  function resetForm(form: HTMLFormElement) {
+    form.reset();
+    setSelectedFile(null);
+    setPreviewImage(null);
   }
 
   return (
@@ -67,9 +86,6 @@ export default function HomePage() {
               name="image"
               onChange={handleFileChange}
             />
-            {isLoading && (
-              <ReloadIcon className="mx-auto mt-6 h-6 w-6 animate-spin text-slate-500" />
-            )}
             {previewImage && selectedFile && (
               <div className="relative aspect-video w-full">
                 <Image
@@ -84,6 +100,7 @@ export default function HomePage() {
         </CardContent>
         <CardFooter>
           <Button className="ml-auto" disabled={classifyDisabled}>
+            {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
             Classify
           </Button>
         </CardFooter>
