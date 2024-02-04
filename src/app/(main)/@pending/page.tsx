@@ -11,6 +11,8 @@ import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { getFileExtension } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function PendingPage() {
   const pendingJobs = await getJobsInPendingState();
   return (
@@ -25,7 +27,8 @@ export default async function PendingPage() {
                   {job.imageName}
                 </CardTitle>
                 <CardDescription title={job.createdAt.toString()}>
-                  {formatDistanceToNow(job.createdAt)} ago
+                  {formatDistanceToNow(job.createdAt, { includeSeconds: true })}{" "}
+                  ago
                 </CardDescription>
               </CardHeader>
               <CardContent>
