@@ -35,8 +35,24 @@ export default function HomePage() {
 
   const classifyDisabled = !selectedFile || isLoading;
 
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    try {
+      const res = await fetch("/api/job", { method: "POST", body: formData });
+      const data = await res.json();
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
-    <div className="flex h-full items-center justify-center">
+    <form
+      className="flex h-full items-center justify-center"
+      onSubmit={handleSubmit}
+    >
       <Card>
         <CardHeader>
           <CardTitle>Upload an Image</CardTitle>
@@ -48,6 +64,7 @@ export default function HomePage() {
               id="picture"
               type="file"
               accept="image/*"
+              name="image"
               onChange={handleFileChange}
             />
             {isLoading && (
@@ -71,6 +88,6 @@ export default function HomePage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </form>
   );
 }
