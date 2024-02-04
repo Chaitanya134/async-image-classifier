@@ -17,6 +17,7 @@ enum Status {
 
 model ImageClassificationJob {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  imageName String
   status    Status
   result    String?
   images    Image[]
@@ -28,7 +29,7 @@ model Image {
   id        String                 @id @default(auto()) @map("_id") @db.ObjectId
   jobId     String                 @db.ObjectId
   job       ImageClassificationJob @relation(fields: [jobId], references: [id])
-  data      Bytes[]
+  data      String[]
   createdAt DateTime               @default(now())
   updatedAt DateTime               @updatedAt
 }

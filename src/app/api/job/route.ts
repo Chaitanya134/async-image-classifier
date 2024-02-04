@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { splitBufferIntoChunks } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 
 const MAX_CHUNK_SIZE = 1024 * 1024; // 1MB
 
@@ -26,6 +27,7 @@ export async function POST(req: Request, res: Response) {
 
     const job = await prisma.imageClassificationJob.create({
       data: {
+        imageName: image.name,
         status: "PENDING",
         images: {
           create: {
@@ -34,6 +36,8 @@ export async function POST(req: Request, res: Response) {
         },
       },
     });
+
+    revalidatePath("/");
 
     return Response.json({ message: "Success" }, { status: 200 });
   } catch (err) {
