@@ -7,9 +7,7 @@ export async function getJobsInPendingState() {
       images: true,
     },
     where: { status: "PENDING" },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: [{ pendingAt: "desc" }, { createdAt: "desc" }],
   });
 
   // Combine the image chunks into one single image
@@ -25,9 +23,7 @@ export async function getJobsInCompletedState() {
       images: true,
     },
     where: { status: "COMPLETED" },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: [{ completedAt: "desc" }, { createdAt: "desc" }],
   });
 
   // Combine the image chunks into one single image
