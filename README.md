@@ -77,6 +77,11 @@ pnpm dev
 - Used when retrying a failed job
 - Set the job status to pending
 
+### 4. Inside the file `src/lib/imagga.ts`:
+
+- `uploadImageToImagga()`: Upload an image to imagga server
+- `classifyImage()`: Get classification results from imagga
+
 ## Queuing Mechanism:
 
 ### 1. User Uploads:
