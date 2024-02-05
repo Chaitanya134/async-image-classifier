@@ -4,41 +4,102 @@
 
 Develop a web-based application that allows users to upload images for classification. The system should process these images asynchronously, utilizing a queue-based system for handling image classification jobs. Users should be able to check the status of their submission (Pending or Completed) and view the classification result once it's available.
 
-## Requirements:
+## Getting Started
 
-### Front-End:
+### Clone the repo
 
-- Design a simple user interface where users can:
-  - Upload images for classification.
-  - View the status of their submitted job (Pending or Completed).
-  - View the classification result of the image once the job is completed.
+```
+git clone https://github.com/Chaitanya134/async-image-classifier.git
+cd async-image-classifier
+```
 
-### Back-End:
+### Start Redis
 
-- Implement an API endpoint for image upload. Upon receiving an image, respond to the user that their job is scheduled.
-- Implement a queuing system to manage incoming image classification requests.
-- Develop a machine learning inferencing job that triggers when a request is received in the queue. This job should:
-  - Classify the image using a pre-trained model.
-  - Return the classification result to the back-end server upon completion.
+Redis is required for the queuing system to work.
 
-### Database:
+If you have redis installed in you system already then run it.
 
-- Store job statuses and classification results in a database. Each entry should include:
-  - A unique job ID.
-  - The status of the job (Pending, Completed).
-  - The classification result (once available).
+If not, then use the provided docker container to start it:
+`docker-compose -d up`
 
-### Job Status Checking:
+To stop the docker container:
+`docker-compose down`
 
-- Allow users to check the status of their job through the front-end interface. Implement the necessary back-end logic to:
-  - Query the database using the job ID.
-  - Return the job status and classification result to the user.
+### Install all dependencies
 
-## Deliverables:
+```
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
 
-- Source code for the front-end and back-end implementation.
-- A brief documentation covering:
-  - Setup and deployment instructions.
-  - API endpoint details.
-  - A high-level overview of the queuing and machine learning inferencing mechanism.
-- Any scripts or commands needed to deploy the application and its dependencies.
+### Run the development server
+
+```
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+## API Endpoints:
+
+### 1. `/api/job`:
+
+- Upload the image to Imagga server
+- Create a new image classification job
+  - Save the image chunks to database
+  - Set the job status to pending
+- Add the job to queue
+
+### 2. `/api/job/completed/:jobId`:
+
+- Webhook Url
+- Set the job status to completed
+
+### 3. `/api/job/pending/:jobId`:
+
+- Used when retrying a failed job
+- Set the job status to pending
+
+## Queuing Mechanism:
+
+### 1. User Uploads:
+
+- Users can upload images through the web interface.
+- The uploaded file is sent to the Imagga server for classification.
+- The file is stored in the database using chunks of 1MB to optimize the upload process.
+
+### 2. Pending State and Database Update:
+
+- Upon upload, the file enters a "Pending" state and is saved to the MongoDB database.
+- The database records the Imagga upload ID, allowing us to associate the file with its classification results.
+
+### 3. Queue Limiter:
+
+- The system is designed to handle one request every 10 seconds with a maximum of 1 request at a time, ensuring efficient resource utilization.
+- This limiter is configured to control the flow of image classification jobs in the queue.
+
+### 4. Queue Processing:
+
+- As a new file enters the "Pending" state, it triggers a job in the BullMQ queue.
+- The queue processes the job asynchronously and sends the file for classification to the Imagga server.
+
+### 5. Imagga Classification:
+
+- During classification, a mock error is introduced with a probability of 40% to simulate occasional failures.
+- If successful, the results are stored in the database.
+
+### 6. Webhooks and Database Update:
+
+- Upon completion of the classification process, whether successful or with an error, a webhook updates the database with the results and the file moves to the "Completed" state..
+- If successful, a bar graph showing all possible values and their probabilities is displayed to the user.
+- In case of failure, a retry button is presented to the user.
+
+### 7. Retry Mechanism:
+
+- If classification fails, users can retry the process by clicking the retry button.
+- This action sets the file back to the "Pending" state and adds it to the queue for reprocessing.
