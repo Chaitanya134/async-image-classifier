@@ -8,8 +8,18 @@ type ProcessImageJob = {
   job: { id: string; imaggaUploadId: string };
 };
 
-async function processImageJob(processJob: any) {
-  const { webhookUrl, job } = processJob.data as ProcessImageJob;
+/**
+ * Processes an image classification job by calling the Imagga API, updating the job status, and notifying the user.
+ *
+ * @param {Object} processJob - The data associated with the image classification job.
+ * @param {string} processJob.data.webhookUrl - The URL to send the job completion notification.
+ * @param {Object} processJob.data.job - Details of the image classification job.
+ * @param {string} processJob.data.job.id - The unique identifier of the job.
+ * @param {string} processJob.data.job.imaggaUploadId - The Imagga upload ID associated with the image.
+ * @returns {Promise<void>} A Promise that resolves once the job processing is complete.
+ */
+async function processImageJob(processJob: { data: ProcessImageJob }) {
+  const { webhookUrl, job } = processJob.data;
   const res = await classifyImage(job.imaggaUploadId);
   const status = res.status.type;
 

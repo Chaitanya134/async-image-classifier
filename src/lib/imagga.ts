@@ -24,6 +24,12 @@ export type ClassifyResult = {
   }[];
 };
 
+/**
+ * Uploads an image to Imagga for processing.
+ *
+ * @param {FormData} data - The FormData containing the image file to upload.
+ * @returns {Promise<ImaggaResponse<UploadResult>>} A Promise that resolves to the Imagga API response for the upload operation.
+ */
 export async function uploadImageToImagga(data: FormData) {
   const res = await got.post("https://api.imagga.com/v2/uploads", {
     body: data,
@@ -34,6 +40,12 @@ export async function uploadImageToImagga(data: FormData) {
   return JSON.parse(res.body) as unknown as ImaggaResponse<UploadResult>;
 }
 
+/**
+ * Retrieves classification results for an image from Imagga with a 40% chance of resulting in error.
+ *
+ * @param {string} uploadId - The unique identifier of the uploaded image in Imagga.
+ * @returns {Promise<ImaggaResponse<ClassifyResult>>} A Promise that resolves to the Imagga API response for image classification.
+ */
 export async function classifyImage(uploadId: string) {
   const res = await got(
     `https://api.imagga.com/v2/tags?image_upload_id=${encodeURIComponent(uploadId)}`,
