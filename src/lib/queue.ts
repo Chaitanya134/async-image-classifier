@@ -1,24 +1,19 @@
-import Bull from "bull";
+import { Queue, Worker } from "bullmq";
 import { classifyImage } from "./imagga";
 
 // Queue can process a maximum of 1 request per 1000 ms(1s)
-export const imageClassificationQueue = new Bull("imageClassification", {
-  limiter: {
-    max: 1,
-    duration: 1000,
-  },
-});
+export const imageClassificationQueue = new Queue("imageClassification");
 
 type ProcessImageJob = {
   webhookUrl: string;
   job: { id: string; imaggaUploadId: string };
 };
 
-async function processImageJob(processData: any) {
-  const { webhookUrl, job } = processData as ProcessImageJob;
-
+async function processImageJob(processJob: any) {
+  const { webhookUrl, job } = processJob.data as ProcessImageJob;
   const res = await classifyImage(job.imaggaUploadId);
   const status = res.status.type;
+  console.log(res.result.tags);
 
   await fetch(webhookUrl, {
     method: "POST",
@@ -31,4 +26,11 @@ async function processImageJob(processData: any) {
   });
 }
 
-imageClassificationQueue.process(processImageJob);
+const worker = new Worker(
+  "imageClassification",
+  async (job) => processImageJob(job),
+  {
+    limiter: { duration: 1000, max: 1 },
+    connection: { host: "localhost", port: 6379 },
+  },
+);

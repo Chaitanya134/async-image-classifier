@@ -2,7 +2,6 @@ import { uploadImageToImagga } from "@/lib/imagga";
 import { prisma } from "@/lib/prisma";
 import { imageClassificationQueue } from "@/lib/queue";
 import { splitBufferIntoChunks } from "@/lib/utils";
-import got from "got";
 import { revalidatePath } from "next/cache";
 
 const MAX_CHUNK_SIZE = 1024 * 1024; // 1MB
@@ -17,7 +16,6 @@ export async function POST(req: Request, res: Response) {
     }
 
     const res = await uploadImageToImagga(data);
-    console.log({ res });
     if (res.status.type === "error") {
       throw Error("Error in uploading image. Try again");
     }
@@ -42,8 +40,8 @@ export async function POST(req: Request, res: Response) {
       },
     });
 
-    imageClassificationQueue.add({
-      webhookUrl: `/api/job/completed/${job.id}`,
+    imageClassificationQueue.add("imageClassification", {
+      webhookUrl: `http://localhost:3000/api/job/completed/${job.id}`,
       job: { id: job.id, imaggaUploadId: job.imaggaUploadId },
     });
 
