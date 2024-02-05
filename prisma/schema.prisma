@@ -28,6 +28,7 @@ model ImageClassificationJob {
   result           String?
   images           Image[]
   completionStatus CompletionStatus?
+  pendingAt        DateTime          @default(now())
   completedAt      DateTime?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt

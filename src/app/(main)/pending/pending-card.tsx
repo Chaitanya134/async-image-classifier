@@ -22,8 +22,18 @@ export default function PendingCard({ job }: PendingCardProps) {
         <CardTitle className="line-clamp-1" title={job.imageName}>
           {job.imageName}
         </CardTitle>
-        <CardDescription title={job.createdAt.toString()}>
-          {formatDistanceToNow(job.createdAt, { includeSeconds: true })} ago
+        <CardDescription>
+          <>
+            <span title={job.createdAt.toString()} className="mr-2">
+              Created:{" "}
+              {formatDistanceToNow(job.createdAt, { includeSeconds: true })} ago
+            </span>
+            •
+            <span title={job.pendingAt.toString()} className="ml-2">
+              Pending:{" "}
+              {formatDistanceToNow(job.pendingAt, { includeSeconds: true })} ago
+            </span>
+          </>
         </CardDescription>
       </CardHeader>
       <CardContent>
