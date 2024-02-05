@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { ImageClassificationJob } from "@prisma/client";
 
 export async function getJobsInPendingState() {
   const jobs = await prisma.imageClassificationJob.findMany({
@@ -34,4 +35,26 @@ export async function getJobsInCompletedState() {
     ...job,
     image: images.reduce((data, image) => data + image.data, ""),
   }));
+}
+
+type SetJobCompleted = {
+  job: ImageClassificationJob;
+  result: string;
+  completionStatus: ImageClassificationJob["completionStatus"];
+};
+
+export async function setJobCompleted({
+  job,
+  result,
+  completionStatus,
+}: SetJobCompleted) {
+  await prisma.imageClassificationJob.update({
+    data: {
+      status: "COMPLETED",
+      completionStatus,
+      result,
+      completedAt: new Date(),
+    },
+    where: { id: job.id },
+  });
 }
