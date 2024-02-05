@@ -101,7 +101,7 @@ export default function HomePage() {
         <CardFooter>
           <Button className="ml-auto" disabled={classifyDisabled}>
             {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
-            Classify
+            {isLoading ? "Uploading" : "Classify"}
           </Button>
         </CardFooter>
       </Card>
