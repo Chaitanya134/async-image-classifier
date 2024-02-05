@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
 import { ImageClassificationJob } from "@prisma/client";
-import { unstable_noStore } from "next/cache";
 
 export async function getJobsInPendingState() {
   const jobs = await prisma.imageClassificationJob.findMany({

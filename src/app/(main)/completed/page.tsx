@@ -1,9 +1,6 @@
 import { getJobsInCompletedState } from "@/data-access/job";
 import CompletedCard from "./completed-card";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export default async function CompletedPage() {
   const completedJobs = await getJobsInCompletedState();
 
