@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { ClassifyResult } from "@/lib/imagga";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ImageClassificationJobWithImage } from "@/lib/types";
+import RetryButton from "./retry-button";
 
 type CompletedCardProps = {
   job: ImageClassificationJobWithImage;
@@ -61,6 +62,14 @@ export default function CompletedCard({ job }: CompletedCardProps) {
           {<Separator orientation="vertical" className="hidden xl:h-[400px]" />}
           <ScrollArea className="h-[400px] w-full">
             <div className="space-y-2">
+              {result.tags.length === 0 && (
+                <div className="grid h-[400px] w-full place-items-center">
+                  <RetryButton
+                    jobId={job.id}
+                    imaggaUploadId={job.imaggaUploadId}
+                  />
+                </div>
+              )}
               {result.tags.map(({ confidence, tag }, index) => (
                 <div
                   key={index}

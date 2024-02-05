@@ -40,5 +40,15 @@ export async function classifyImage(uploadId: string) {
     { username: apiKey, password: apiSecret },
   );
 
-  return JSON.parse(res.body) as unknown as ImaggaResponse<ClassifyResult>;
+  const response = JSON.parse(
+    res.body,
+  ) as unknown as ImaggaResponse<ClassifyResult>;
+
+  // mock an error while classifying image with probability of 40%
+  if (Math.random() <= 0.4) {
+    response.status.type = "error";
+    response.result.tags = [];
+  }
+
+  return response;
 }

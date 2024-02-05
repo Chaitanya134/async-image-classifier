@@ -58,3 +58,13 @@ export async function setJobCompleted({
     where: { id: jobId },
   });
 }
+
+export async function setJobPending(jobId: string) {
+  await prisma.imageClassificationJob.update({
+    data: {
+      status: "PENDING",
+      pendingAt: new Date(),
+    },
+    where: { id: jobId },
+  });
+}
