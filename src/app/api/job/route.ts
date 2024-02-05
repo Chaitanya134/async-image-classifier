@@ -43,7 +43,7 @@ export async function POST(req: Request, res: Response) {
     revalidatePath("/", "layout");
 
     imageClassificationQueue.add("imageClassification", {
-      webhookUrl: `http://localhost:3000/api/job/completed/${job.id}`,
+      webhookUrl: `${process.env.CLIENT_URL}/api/job/completed/${job.id}`,
       job: { id: job.id, imaggaUploadId: job.imaggaUploadId },
     });
 
