@@ -1,5 +1,7 @@
+import { uploadImageToImagga } from "@/lib/imagga";
 import { prisma } from "@/lib/prisma";
 import { splitBufferIntoChunks } from "@/lib/utils";
+import got from "got";
 import { revalidatePath } from "next/cache";
 
 const MAX_CHUNK_SIZE = 1024 * 1024; // 1MB
@@ -13,20 +15,22 @@ export async function POST(req: Request, res: Response) {
       return Response.json({ message: "No image found" }, { status: 400 });
     }
 
+    const res = await uploadImageToImagga(data);
+    console.log({ res });
+    if (res.status.type === "error") {
+      throw Error("Error in uploading image. Try again");
+    }
+
+    const uploadId = res.result.upload_id;
+
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
     const chunks = splitBufferIntoChunks(buffer, MAX_CHUNK_SIZE);
 
-    const imageChunks = chunks.map((chunk, index) => {
-      return {
-        index: index + 1,
-        data: chunk,
-      };
-    });
-
     const job = await prisma.imageClassificationJob.create({
       data: {
+        imaggaUploadId: uploadId,
         imageName: image.name,
         status: "PENDING",
         images: {

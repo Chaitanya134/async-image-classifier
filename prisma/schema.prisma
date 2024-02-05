@@ -22,6 +22,7 @@ enum CompletionStatus {
 
 model ImageClassificationJob {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  imaggaUploadId   String            @unique
   imageName        String
   status           Status
   result           String?
