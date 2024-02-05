@@ -15,13 +15,13 @@ type UploadResult = {
   upload_id: string;
 };
 
-type ClassifyResult = {
+export type ClassifyResult = {
   tags: {
     confidence: number;
     tag: {
       en: string;
-    }[];
-  };
+    };
+  }[];
 };
 
 export async function uploadImageToImagga(data: FormData) {
