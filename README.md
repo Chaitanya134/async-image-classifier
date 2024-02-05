@@ -4,16 +4,16 @@
 
 Develop a web-based application that allows users to upload images for classification. The system should process these images asynchronously, utilizing a queue-based system for handling image classification jobs. Users should be able to check the status of their submission (Pending or Completed) and view the classification result once it's available.
 
-## Getting Started
+## Getting Started:
 
-### Clone the repo
+### 1. Clone the repo:
 
 ```
 git clone https://github.com/Chaitanya134/async-image-classifier.git
 cd async-image-classifier
 ```
 
-### Start Redis
+### 2. Start Redis:
 
 Redis is required for the queuing system to work.
 
@@ -25,7 +25,7 @@ If not, then use the provided docker container to start it:
 To stop the docker container:
 `docker-compose down`
 
-### Install all dependencies
+### 3. Install all dependencies:
 
 ```
 npm install
@@ -35,7 +35,11 @@ yarn install
 pnpm install
 ```
 
-### Run the development server
+### 4. Generate prisma types:
+
+`npx prisma generate`
+
+### 5. Run the development server:
 
 ```
 npm run dev
