@@ -1,5 +1,6 @@
 import { uploadImageToImagga } from "@/lib/imagga";
 import { prisma } from "@/lib/prisma";
+import { imageClassificationQueue } from "@/lib/queue";
 import { splitBufferIntoChunks } from "@/lib/utils";
 import got from "got";
 import { revalidatePath } from "next/cache";
@@ -39,6 +40,11 @@ export async function POST(req: Request, res: Response) {
           },
         },
       },
+    });
+
+    imageClassificationQueue.add({
+      webhookUrl: process.env.WEBHOOK_URL,
+      job: { id: job.id, imaggaUploadId: job.imaggaUploadId },
     });
 
     revalidatePath("/");
