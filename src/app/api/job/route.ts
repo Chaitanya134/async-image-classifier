@@ -45,7 +45,7 @@ export async function POST(req: Request, res: Response) {
       job: { id: job.id, imaggaUploadId: job.imaggaUploadId },
     });
 
-    revalidatePath("/");
+    revalidatePath("/", "layout");
 
     return Response.json({ message: "Success" }, { status: 200 });
   } catch (err) {

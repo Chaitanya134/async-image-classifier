@@ -8,13 +8,13 @@ import {
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { getFileExtension } from "@/lib/utils";
-import { ImageClassificationJob } from "@prisma/client";
 import { Separator } from "@/components/ui/separator";
 import { ClassifyResult } from "@/lib/imagga";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ImageClassificationJobWithImage } from "@/lib/types";
 
 type CompletedCardProps = {
-  job: ImageClassificationJob & { image: string };
+  job: ImageClassificationJobWithImage;
 };
 
 export default function CompletedCard({ job }: CompletedCardProps) {
@@ -27,12 +27,23 @@ export default function CompletedCard({ job }: CompletedCardProps) {
         <CardTitle className="line-clamp-1" title={job.imageName}>
           {job.imageName}
         </CardTitle>
-        <CardDescription title={job.createdAt.toString()}>
-          {formatDistanceToNow(job.createdAt, { includeSeconds: true })} ago
+        <CardDescription>
+          <>
+            <span title={job.createdAt.toString()} className="mr-2">
+              Created:{" "}
+              {formatDistanceToNow(job.createdAt, { includeSeconds: true })} ago
+            </span>
+            •
+            <span title={job.completedAt!.toString()} className="ml-2">
+              Completed:{" "}
+              {formatDistanceToNow(job.completedAt!, { includeSeconds: true })}{" "}
+              ago
+            </span>
+          </>
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex w-full gap-4">
+        <div className="flex w-full flex-col gap-4 xl:flex-row">
           <div className="relative aspect-video h-[400px]">
             <Image
               src={`data:image/${isSvg ? "svg+xml" : "png"};base64,${job.image}`}
@@ -41,7 +52,13 @@ export default function CompletedCard({ job }: CompletedCardProps) {
               fill
             />
           </div>
-          <Separator orientation="vertical" className="h-[400px]" />
+          {
+            <Separator
+              orientation="horizontal"
+              className="my-2 block xl:hidden"
+            />
+          }
+          {<Separator orientation="vertical" className="hidden xl:h-[400px]" />}
           <ScrollArea className="h-[400px] w-full">
             <div className="space-y-2">
               {result.tags.map(({ confidence, tag }, index) => (
@@ -56,7 +73,7 @@ export default function CompletedCard({ job }: CompletedCardProps) {
                     style={{
                       width: confidence.toFixed(2) + "%",
                       opacity:
-                        Math.max(parseFloat(confidence.toFixed(2)), 10) + "%",
+                        Math.max(parseFloat(confidence.toFixed(2)), 5) + "%",
                     }}
                   />
                   <span className="col-span-1">{confidence.toFixed(2)}%</span>
