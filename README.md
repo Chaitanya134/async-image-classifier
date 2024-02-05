@@ -35,11 +35,19 @@ yarn install
 pnpm install
 ```
 
-### 4. Generate prisma types:
+### 4. Environment variables:
 
-`npx prisma generate`
+Create a `.env` file at the root directory and fill it's values according to `.env.example`
 
-### 5. Run the development server:
+### 5. Prisma types:
+
+Generate prisma types
+
+```
+npx prisma generate
+```
+
+### 6. Run the development server:
 
 ```
 npm run dev
