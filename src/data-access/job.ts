@@ -38,13 +38,13 @@ export async function getJobsInCompletedState() {
 }
 
 type SetJobCompleted = {
-  job: ImageClassificationJob;
+  jobId: string;
   result: string;
   completionStatus: ImageClassificationJob["completionStatus"];
 };
 
 export async function setJobCompleted({
-  job,
+  jobId,
   result,
   completionStatus,
 }: SetJobCompleted) {
@@ -55,6 +55,6 @@ export async function setJobCompleted({
       result,
       completedAt: new Date(),
     },
-    where: { id: job.id },
+    where: { id: jobId },
   });
 }
