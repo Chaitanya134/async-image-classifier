@@ -17,6 +17,9 @@ export default async function CompletedPage() {
   return (
     <div className="grid h-full place-items-center overflow-auto">
       <div className="flex w-full flex-col items-center justify-center gap-4 py-8">
+        {completedJobs.length === 0 && (
+          <h1 className="text-lg">No task in completed state</h1>
+        )}
         {completedJobs.map((job) => {
           const isSvg = getFileExtension(job.imageName) === "svg";
           return (
