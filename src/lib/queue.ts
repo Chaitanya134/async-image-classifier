@@ -1,6 +1,7 @@
 import { Queue, Worker } from "bullmq";
 import { classifyImage } from "./imagga";
 
+export const JOB_PROCESSING_DELAY = 5 * 1000; // 5000 milliseconds (5 seconds) delay between processing each job
 export const imageClassificationQueue = new Queue("imageClassification");
 
 type ProcessImageJob = {

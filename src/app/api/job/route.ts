@@ -1,6 +1,6 @@
 import { uploadImageToImagga } from "@/lib/imagga";
 import { prisma } from "@/lib/prisma";
-import { imageClassificationQueue } from "@/lib/queue";
+import { JOB_PROCESSING_DELAY, imageClassificationQueue } from "@/lib/queue";
 import { splitBufferIntoChunks } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
@@ -42,10 +42,14 @@ export async function POST(req: Request, res: Response) {
 
     revalidatePath("/", "layout");
 
-    imageClassificationQueue.add("imageClassification", {
-      webhookUrl: `${process.env.CLIENT_URL}/api/job/completed/${job.id}`,
-      job: { id: job.id, imaggaUploadId: job.imaggaUploadId },
-    });
+    imageClassificationQueue.add(
+      "imageClassification",
+      {
+        webhookUrl: `${process.env.CLIENT_URL}/api/job/completed/${job.id}`,
+        job: { id: job.id, imaggaUploadId: job.imaggaUploadId },
+      },
+      { delay: JOB_PROCESSING_DELAY },
+    );
 
     return Response.json({ message: "Success" }, { status: 200 });
   } catch (err) {
